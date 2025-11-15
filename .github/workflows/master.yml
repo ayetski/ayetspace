@@ -1,0 +1,56 @@
+name: Laravel CI/CD - Main Branch (Production)
+
+on:
+  push:
+    branches:
+      - main  # This will trigger on any push to the main (production) branch
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, bcmath, sqlite3
+
+      - name: Install Composer dependencies
+        run: |
+          curl -sS https://getcomposer.org/installer | php
+          php composer.phar install --no-interaction --prefer-dist
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      # Run tests (optional for production)
+      - name: Run tests
+        run: php artisan test
+
+  # Deployment job - only deploy if changes are pushed to the `main` branch
+  deploy:
+    needs: setup
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # Only deploy when pushing to `main` branch
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH key for deployment
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to production server
+        run: |
+          ssh user@your-production-server "cd /path/to/your/project && git pull origin main && php artisan migrate --force && php artisan config:cache && php artisan route:cache"

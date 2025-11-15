@@ -1,0 +1,94 @@
+name: Laravel CI - Develop Branch
+
+on:
+  push:
+    branches:
+      - develop  # This will trigger on any push to the develop branch
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'  # You can change this to your Laravel version PHP
+          extensions: mbstring, bcmath, sqlite3
+
+      - name: Install Composer dependencies
+        run: |
+          curl -sS https://getcomposer.org/installer | php
+          php composer.phar install --no-interaction --prefer-dist
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      # Optional: Run tests (if you have tests written)
+      - name: Run tests
+        run: php artisan test
+
+  # Optional: Additional linting/validation (if you use other tools like PHPStan, PHP-CS-Fixer, etc.)
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run PHP lint check
+        run: php -l app/  # Run PHP lint on the `app` folder (or other folders if necessary)
+name: Laravel CI - Develop Branch
+
+on:
+  push:
+    branches:
+      - develop  # This will trigger on any push to the develop branch
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'  # You can change this to your Laravel version PHP
+          extensions: mbstring, bcmath, sqlite3
+
+      - name: Install Composer dependencies
+        run: |
+          curl -sS https://getcomposer.org/installer | php
+          php composer.phar install --no-interaction --prefer-dist
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      # Optional: Run tests (if you have tests written)
+      - name: Run tests
+        run: php artisan test
+
+  # Optional: Additional linting/validation (if you use other tools like PHPStan, PHP-CS-Fixer, etc.)
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run PHP lint check
+        run: php -l app/  # Run PHP lint on the `app` folder (or other folders if necessary)
